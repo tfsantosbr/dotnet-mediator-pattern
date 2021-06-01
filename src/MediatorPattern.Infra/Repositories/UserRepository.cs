@@ -1,10 +1,10 @@
 ﻿using MediatorPattern.Domain.Users.Repository;
-using NotificationPattern.Domain.Entities;
+using MediatorPattern.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NotificationPattern.Domain.Users.Repository
+namespace MediatorPattern.Domain.Users.Repository
 {
     public class UserRepository : IUserRepository
     {

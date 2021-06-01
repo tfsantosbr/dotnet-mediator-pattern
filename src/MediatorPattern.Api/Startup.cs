@@ -1,12 +1,12 @@
-using MediatorPattern.Domain.Users.Handlers;
+using System;
 using MediatorPattern.Domain.Users.Repository;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using NotificationPattern.Domain.Users.Repository;
 
 namespace MediatorPattern.Api
 {
@@ -27,8 +27,8 @@ namespace MediatorPattern.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MediatorPattern.Api", Version = "v1" });
             });
 
-            services.AddTransient<UserCommandsHandler>();
-            services.AddTransient<UserEventsHandler>();
+            services.AddMediatR(AppDomain.CurrentDomain.Load("MediatorPattern.Domain"));
+
             services.AddTransient<IUserRepository, UserRepository>();
         }
 

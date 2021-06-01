@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using MediatorPattern.Domain.Users.Commands;
-using MediatorPattern.Domain.Users.Handlers;
 using MediatorPattern.Domain.Users.Models;
 using MediatorPattern.Domain.Users.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using NotificationPattern.Domain.Users.Repository;
+using MediatR;
+using System.Threading.Tasks;
 
 namespace MediatorPattern.Api.Controllers
 {
@@ -15,19 +12,19 @@ namespace MediatorPattern.Api.Controllers
     [Route("users")]
     public class UsersController : ControllerBase
     {
-        private readonly UserCommandsHandler _handler;
+        private readonly IMediator _mediator;
         private readonly IUserRepository _userRepository;
 
-        public UsersController(UserCommandsHandler handler, IUserRepository userRepository)
+        public UsersController(IMediator mediator, IUserRepository userRepository)
         {
-            _handler = handler;
+            _mediator = mediator;
             _userRepository = userRepository;
         }
 
         [HttpPost]
-        public IActionResult CreateUser(CreateUser request)
+        public async Task<IActionResult> CreateUser(CreateUser request)
         {
-            var user = _handler.Handle(request);
+            var user = await _mediator.Send(request);
 
             var userDetails = new UserDetails
             {
@@ -62,38 +59,38 @@ namespace MediatorPattern.Api.Controllers
         }
 
         [HttpDelete]
-        public IActionResult RemoveUser(Guid userId)
+        public async Task<IActionResult> RemoveUser(Guid userId)
         {
             if (!_userRepository.AnyUser(userId))
                 return NotFound();
 
-            _handler.Handle(new RemoveUser { Id = userId });
+            await _mediator.Send(new RemoveUser { Id = userId });
 
             return NoContent();
         }
 
         [HttpPut("details")]
-        public IActionResult UpdateUserDetails(UpdateUserDetails request)
+        public async Task<IActionResult> UpdateUserDetails(UpdateUserDetails request)
         {
             if (!_userRepository.AnyUser(request.Id))
             {
                 return NotFound();
             }
 
-            _handler.Handle(request);
+            await _mediator.Send(request);
 
             return NoContent();
         }
 
         [HttpPut("password")]
-        public IActionResult UpdateUserPassword(UpdateUserPassword request)
+        public async Task<IActionResult> UpdateUserPassword(UpdateUserPassword request)
         {
             if (!_userRepository.AnyUser(request.Id))
             {
                 return NotFound();
             }
 
-            _handler.Handle(request);
+            await _mediator.Send(request);
 
             return NoContent();
         }

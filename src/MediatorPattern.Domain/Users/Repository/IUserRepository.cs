@@ -1,5 +1,5 @@
 using System;
-using NotificationPattern.Domain.Entities;
+using MediatorPattern.Domain.Entities;
 
 namespace MediatorPattern.Domain.Users.Repository
 {

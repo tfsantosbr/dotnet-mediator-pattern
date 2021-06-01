@@ -1,8 +1,9 @@
 using System;
+using MediatR;
 
 namespace MediatorPattern.Domain.Users.Events
 {
-    public class UserDetailsUpdated
+    public class UserDetailsUpdated : INotification
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }

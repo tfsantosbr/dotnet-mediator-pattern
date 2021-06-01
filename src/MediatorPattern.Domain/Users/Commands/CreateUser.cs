@@ -1,8 +1,10 @@
 ﻿using System;
+using MediatR;
+using MediatorPattern.Domain.Entities;
 
 namespace MediatorPattern.Domain.Users.Commands
 {
-    public class CreateUser
+    public class CreateUser : IRequest<User>
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

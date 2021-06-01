@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NotificationPattern.Domain.Entities
+namespace MediatorPattern.Domain.Entities
 {
     public class User
     {

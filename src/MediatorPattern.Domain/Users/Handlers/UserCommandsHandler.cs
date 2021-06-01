@@ -1,23 +1,30 @@
 ﻿using MediatorPattern.Domain.Users.Commands;
 using MediatorPattern.Domain.Users.Events;
 using MediatorPattern.Domain.Users.Repository;
-using NotificationPattern.Domain.Entities;
+using MediatorPattern.Domain.Entities;
 using System;
+using MediatR;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MediatorPattern.Domain.Users.Handlers
 {
-    public class UserCommandsHandler
+    public class UserCommandsHandler :
+        IRequestHandler<CreateUser, User>,
+        IRequestHandler<UpdateUserDetails>,
+        IRequestHandler<UpdateUserPassword>,
+        IRequestHandler<RemoveUser>
     {
         private readonly IUserRepository _userRepository;
-        private readonly UserEventsHandler _userEventsHandler;
+        private readonly IMediator _mediator;
 
-        public UserCommandsHandler(IUserRepository userRepository, UserEventsHandler userEventsHandler)
+        public UserCommandsHandler(IUserRepository userRepository, IMediator mediator)
         {
             _userRepository = userRepository;
-            _userEventsHandler = userEventsHandler;
+            _mediator = mediator;
         }
 
-        public User Handle(CreateUser request)
+        public Task<User> Handle(CreateUser request, CancellationToken cancellationToken)
         {
             // validations...
 
@@ -42,15 +49,15 @@ namespace MediatorPattern.Domain.Users.Handlers
                 LastName = user.LastName,
                 BirthDate = user.BirthDate,
                 Email = user.Email,
-                Password = user.Password  
+                Password = user.Password
             };
 
-            _userEventsHandler.Handle(userCreated);
+            _mediator.Publish(userCreated);
 
-            return user;
+            return Task.FromResult(user);
         }
 
-        public void Handle(UpdateUserDetails request)
+        public Task<Unit> Handle(UpdateUserDetails request, CancellationToken cancellationToken)
         {
             // validations...
 
@@ -81,10 +88,12 @@ namespace MediatorPattern.Domain.Users.Handlers
                 Email = user.Email
             };
 
-            _userEventsHandler.Handle(userDetailsUpdated);
+            _mediator.Publish(userDetailsUpdated);
+
+            return Task.FromResult(Unit.Value);
         }
 
-        public void Handle(UpdateUserPassword request)
+        public Task<Unit> Handle(UpdateUserPassword request, CancellationToken cancellationToken)
         {
             // validations
 
@@ -102,13 +111,15 @@ namespace MediatorPattern.Domain.Users.Handlers
             var userPasswordUpdated = new UserPasswordUpdated
             {
                 Id = user.Id,
-                Password = user.Password  
+                Password = user.Password
             };
 
-            _userEventsHandler.Handle(userPasswordUpdated);
+            _mediator.Publish(userPasswordUpdated);
+
+            return Task.FromResult(Unit.Value);
         }
 
-        public void Handle(RemoveUser request)
+        public Task<Unit> Handle(RemoveUser request, CancellationToken cancellationToken)
         {
             // validations
 
@@ -126,7 +137,9 @@ namespace MediatorPattern.Domain.Users.Handlers
                 Id = user.Id
             };
 
-            _userEventsHandler.Handle(userRemoved);
+            _mediator.Publish(userRemoved);
+            
+            return Task.FromResult(Unit.Value);
         }
     }
 }

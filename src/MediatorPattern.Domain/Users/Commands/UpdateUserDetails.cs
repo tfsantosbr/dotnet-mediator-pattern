@@ -1,8 +1,9 @@
 ﻿using System;
+using MediatR;
 
 namespace MediatorPattern.Domain.Users.Commands
 {
-    public class UpdateUserDetails
+    public class UpdateUserDetails : IRequest
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }
